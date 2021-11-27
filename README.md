@@ -8,6 +8,9 @@ Things you may want to cover:
 * Ruby version
 
 * System dependencies
+## Tanda ERD  
+
+![ERD](./img/ERD.png)
 
 * Configuration
 
