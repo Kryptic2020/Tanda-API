@@ -1,12 +1,14 @@
 class UsersController < ApplicationController
 
-
+  def index
+    render json:{Hello:"Welcome to Tanda Express"}
+  end
 
   def create
     @user = User.create(user_params)
     if @user.save
-      UserNotifierMailer.welcome(@user).deliver
       auth_token = Knock::AuthToken.new payload: {sub: @user.id}
+      UserNotifierMailer.welcome(@user).deliver
       render json:{username: @user.username, jwt:auth_token.token} , status: 200
     else
       render json:{errors:"Email has already been taken"}
@@ -17,6 +19,7 @@ class UsersController < ApplicationController
     @user = User.find_by_email(params[:email])
     if @user && @user.authenticate(params[:password])
       auth_token = Knock::AuthToken.new payload: {sub: @user.id} 
+      UserNotifierMailer.welcome(@user).deliver
       render json:{username: @user.username, jwt:auth_token.token} , status: 200
     else
       render json:{errors:"Email or password incorrect"}
