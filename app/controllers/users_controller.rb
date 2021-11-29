@@ -1,4 +1,7 @@
 class UsersController < ApplicationController
+
+
+
   def create
     @user = User.create(user_params)
     if @user.save
@@ -10,10 +13,10 @@ class UsersController < ApplicationController
     end  
   end 
 
-  def sign_in
+  def sign_in  
     @user = User.find_by_email(params[:email])
     if @user && @user.authenticate(params[:password])
-      auth_token = Knock::AuthToken.new payload: {sub: @user.id}
+      auth_token = Knock::AuthToken.new payload: {sub: @user.id} 
       render json:{username: @user.username, jwt:auth_token.token} , status: 200
     else
       render json:{errors:"Email or password incorrect"}
@@ -41,6 +44,6 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.permit(:username,:email,:password,:password_confirmation)
+    params.permit(:username,:email,:password,:password_confirmation,:token)
   end
 end

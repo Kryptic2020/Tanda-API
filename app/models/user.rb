@@ -1,5 +1,6 @@
 class User < ApplicationRecord  
-  has_many :user_org
+  has_many :user_orgs
+  has_many :organizations, through: :user_orgs
   has_many :shifts
   has_secure_password
 
