@@ -10,16 +10,21 @@ Rails.application.routes.draw do
       get "/view/:org_id", to: "organizations#show"
       post "/join", to: "organizations#join"
       delete "/leave/:org_id", to: "organizations#leave"
-      put "/", to: "organizations#update"
       delete "/:org_id", to: "organizations#destroy"
     end
     scope '/shift' do
       post "/new", to: "shifts#create"
+      put "/update", to: "shifts#update"
+      put "/break/update", to: "shifts#break_update"
       get "/:org_id", to: "shifts#index"
+      get "/show/:id", to: "shifts#show"
+      delete "/:shift_id", to: "shifts#destroy"
     end
     scope '/auth' do
+      post "/current-user", to: "users#show"
       post "/sign-up", to: "users#create"
       post "/sign-in", to: "users#sign_in"
+      put "/update", to: "users#update"
       post "/forgot-pass", to: "users#forgot_pass"
       post "/reset-pass", to: "users#reset_pass"
     end
