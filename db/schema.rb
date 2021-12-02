@@ -10,18 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_29_070515) do
+ActiveRecord::Schema.define(version: 2021_12_02_020150) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "breaks", force: :cascade do |t|
-    t.integer "break"
-    t.bigint "shift_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["shift_id"], name: "index_breaks_on_shift_id"
-  end
 
   create_table "organizations", force: :cascade do |t|
     t.string "name"
@@ -63,7 +55,6 @@ ActiveRecord::Schema.define(version: 2021_11_29_070515) do
     t.string "token"
   end
 
-  add_foreign_key "breaks", "shifts"
   add_foreign_key "shifts", "organizations"
   add_foreign_key "shifts", "users"
   add_foreign_key "user_orgs", "organizations"
