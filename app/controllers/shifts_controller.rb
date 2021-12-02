@@ -22,7 +22,7 @@ class ShiftsController < ApplicationController
   end 
 
   def update    
-    @shift.update(date:params[:date], start:params[:start_time], finish:params[:finish_time], break:[params[:break]])
+    @shift.update(date:params[:date], start:params[:start_time], finish:params[:finish_time])
     render json: @shift, status: 200
   end 
 
@@ -40,13 +40,13 @@ class ShiftsController < ApplicationController
 
   def set_shift
         begin
-        @shift = Shift.find(params[:id])
+        @shift = Shift.find(params[:shift_id])
         rescue
           render json: {error: "Organization not found"}, status: 404
         end 
   end
 
   def shift_params
-    params.permit(:date,:start_time, :finish_time, :break, :user_email, :org_id, :id)
+    params.permit(:date,:start_time, :finish_time, :break, :user_email, :org_id, :shift_id)
   end
 end
