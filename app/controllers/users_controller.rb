@@ -4,6 +4,11 @@ class UsersController < ApplicationController
     render json:{Hello:"Welcome to Tanda Express"}
   end
 
+  def show
+  @current_user = User.find_by_email(params[:email]) 
+    render json:@current_user
+  end
+
   def create
     @user = User.create(user_params)
     if @user.save
@@ -44,6 +49,18 @@ class UsersController < ApplicationController
     @user.password = params[:password]
     @user.save
     render json:{msg:"Credentials successfuly saved, please login with your new password"} , status: 200    
+  end
+
+  def update
+
+  p '---------'
+  p params[:password]
+    @user = User.find_by_id(params[:id])
+    @user.password = params[:password]
+    @user.username = params[:username]
+    @user.email = params[:email]
+    @user.save
+    render json:{msg:"Credentials successfuly saved"} , status: 200    
   end
 
   def user_params
