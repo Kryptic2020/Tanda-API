@@ -5,8 +5,12 @@ class UsersController < ApplicationController
   end
 
   def show
-  @current_user = User.find_by_email(params[:email]) 
-    render json:@current_user
+    @current_user = User.find_by_email(params[:email]) 
+    if @current_user
+     render json: @current_user, status: 201
+    else  
+      render json:{error: "User not found"}, status: 404
+    end  
   end
 
   def create
@@ -14,20 +18,19 @@ class UsersController < ApplicationController
     if @user.save
       auth_token = Knock::AuthToken.new payload: {sub: @user.id}
       UserNotifierMailer.welcome(@user).deliver
-      render json:{username: @user.username, jwt:auth_token.token} , status: 200
+      render json:{username: @user.username, jwt:auth_token.token, user_id:@user.id}, status: 200
     else
       render json:{errors:"Email has already been taken"}
     end  
   end 
 
-  def sign_in  
+  def sign_in 
     @user = User.find_by_email(params[:email])
     if @user && @user.authenticate(params[:password])
       auth_token = Knock::AuthToken.new payload: {sub: @user.id} 
-      UserNotifierMailer.welcome(@user).deliver
-      render json:{username: @user.username, jwt:auth_token.token} , status: 200
+      render json:{username: @user.username, jwt:auth_token.token, user_id:@user.id} , status: 200
     else
-      render json:{errors:"Email or password incorrect"}
+      render json:{errors:"Email or password incorrect"}, status: 404
     end  
   end
 
@@ -38,7 +41,7 @@ class UsersController < ApplicationController
       @user.token = @token
       @user.save
       UserNotifierMailer.forgot_pass(@user, @token).deliver
-      render json:{success:"We have sent you an email with the steps to reset your password"} , status: 200
+      render json:{success:"We have sent you an email with the steps to reset your password"}, status: 200
     else
       render json:{errors:"Email invalid"}
     end  
@@ -47,23 +50,28 @@ class UsersController < ApplicationController
   def reset_pass
     @user = User.find_by_token(params[:token])
     @user.password = params[:password]
-    @user.save
-    render json:{msg:"Credentials successfuly saved, please login with your new password"} , status: 200    
+    @user.save   
+    if @user
+      render json:{msg:"Credentials successfuly saved, please login with your new password"}, status: 200
+    else  
+      render json:{msg:"Something went wrong, please try again later or contact the admin"}, status: 404
+    end     
   end
 
   def update
-
-  p '---------'
-  p params[:password]
-    @user = User.find_by_id(params[:id])
+    @user = User.find_by_id(params[:user_id])
     @user.password = params[:password]
     @user.username = params[:username]
     @user.email = params[:email]
     @user.save
-    render json:{msg:"Credentials successfuly saved"} , status: 200    
+    if @user
+      render json:{msg:"Credentials successfuly saved"}, status: 200 
+    else 
+      render json:{msg:"Something went wrong, please try again later or contact the admin"}, status: 404
+    end   
   end
 
   def user_params
-    params.permit(:username,:email,:password,:password_confirmation,:token)
+    params.permit(:username,:email,:password,:password_confirmation,:token, :user_id)
   end
 end
