@@ -2,17 +2,12 @@ class ShiftsController < ApplicationController
   before_action :get_current_user
   before_action :set_shift, only: [:update, :destroy, :show, :break_update]
 
-  def index
-    @shifts = Shift.where(organization_id:params[:org_id],active:true).order(date: :desc)
-    if @shifts
-      render json: @shifts, status: 201
-    else  
-      render json: {error: "Shifts not found"}, status: 404
+  def shifts
+    if (params[:date])
+      @shifts = Shift.where(organization_id:params[:org_id],active:params[:active]).where("date::date = ?", params[:date].to_date).order(date: :desc)
+    else
+      @shifts = Shift.where(organization_id:params[:org_id],active:params[:active]).order(date: :desc)
     end  
-  end
-
-  def inactive
-    @shifts = Shift.where(organization_id:params[:org_id], active:false).order(date: :desc)
     if @shifts
       render json: @shifts, status: 201
     else  
@@ -84,6 +79,6 @@ class ShiftsController < ApplicationController
   end
 
   def shift_params
-    params.permit(:date,:start_time, :finish_time, :break, :user_email, :org_id, :shift_id)
+    params.permit(:date,:start_time, :finish_time, :break, :user_email, :org_id, :shift_id, :active)
   end
 end
