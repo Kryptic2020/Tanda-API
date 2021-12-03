@@ -16,8 +16,7 @@ Rails.application.routes.draw do
       post "/new", to: "shifts#create"
       put "/update", to: "shifts#update"
       put "/break/update", to: "shifts#break_update"
-      get "/active/:org_id", to: "shifts#index"
-      get "/inactive/:org_id", to: "shifts#inactive"
+      post "/shifts", to: "shifts#shifts"
       get "/show/:shift_id", to: "shifts#show"
       delete "/:shift_id", to: "shifts#destroy"
     end
